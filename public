@@ -1,1 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>每日爆款热榜</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    body {
+      background: #f5f7fa;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .title {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 24px;
+      color: #222;
+    }
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+    }
+    .tab {
+      padding: 10px 16px;
+      background: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .tab.active {
+      background: #3b82f6;
+      color: white;
+    }
+    .panel {
+      display: none;
+    }
+    .panel.active {
+      display: block;
+    }
+    .card-list {
+      display: grid;
+      gap: 12px;
+    }
+    .card {
+      background: white;
+      padding: 16px;
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .rank {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #eee;
+      border-radius: 50%;
+      font-weight: bold;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .rank.top1 { background: #ff3a3a; color: white; }
+    .rank.top2 { background: #ff9c3a; color: white; }
+    .rank.top3 { background: #ffd03a; color: white; }
+    .content {
+      flex: 1;
+    }
+    .title-text {
+      font-size: 15px;
+      line-height: 1.4;
+      margin-bottom: 4px;
+    }
+    .hot {
+      font-size: 12px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="title">每日爆款热榜</h1>
 
+  <div class="tabs">
+    <button class="tab active" data-target="douyin">抖音</button>
+    <button class="tab" data-target="xiaohongshu">小红书</button>
+    <button class="tab" data-target="weibo">微博</button>
+    <button class="tab" data-target="bilibili">B站</button>
+  </div>
+
+  <div id="douyin" class="panel active">
+    <div class="card-list" id="list-douyin">加载中...</div>
+  </div>
+  <div id="xiaohongshu" class="panel">
+    <div class="card-list" id="list-xiaohongshu">加载中...</div>
+  </div>
+  <div id="weibo" class="panel">
+    <div class="card-list" id="list-weibo">加载中...</div>
+  </div>
+  <div id="bilibili" class="panel">
+    <div class="card-list" id="list-bilibili">加载中...</div>
+  </div>
+
+  <script>
+    // 标签切换
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        const target = tab.dataset.target;
+        document.getElementById(target).classList.add('active');
+      })
+    })
+
+    // 统一渲染卡片
+    function render(listEl, items) {
+      const html = items.map((item, i) => {
+        const rankClass = i < 3 ? `top${i+1}` : '';
+        return `
+          <div class="card">
+            <div class="rank ${rankClass}">${i+1}</div>
+            <div class="content">
+              <div class="title-text">${item.title}</div>
+              <div class="hot">${item.hot || ''}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      document.getElementById(listEl).innerHTML = html;
+    }
+
+    // 读取自动生成好的数据
+    fetch('/data/hot.json')
+      .then(res => res.json())
+      .then(data => {
+        render('list-douyin', data.douyin || []);
+        render('list-xiaohongshu', data.xiaohongshu || []);
+        render('list-weibo', data.weibo || []);
+        render('list-bilibili', data.bilibili || []);
+      })
+  </script>
+</body>
+</html>
