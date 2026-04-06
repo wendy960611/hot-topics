@@ -1,8 +1,0 @@
-{
-  "name": "hot-topics",
-  "version": "1.0.0",
-  "scripts": {
-    "fetch": "node scripts/fetch.js",
-    "build": "node scripts/fetch.js"
-  }
-}
