@@ -1,0 +1,17 @@
+{
+  "build": {
+    "src": "./",
+    "dist": "./"
+  },
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "@vercel/node@3"
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/cron",
+      "schedule": "0 1 * * *"
+    }
+  ]
+}
